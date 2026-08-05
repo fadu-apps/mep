@@ -1,12 +1,17 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core'
+
+import { Plan } from './core/models/plan'
+import { Wall } from './core/models/wall'
+import { PlanComponent } from './shared/plan/plan'
 
 @Component({
-  selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css',
+    selector: 'app-root',
+    imports: [PlanComponent],
+    templateUrl: './app.html',
+    styleUrl: './app.css',
 })
 export class App {
-  protected readonly title = signal('mep');
+    protected readonly plan = new Plan(
+        new Wall({ x: 150, y: 230, width: 500, height: 24 })
+    )
 }
