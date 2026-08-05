@@ -53,7 +53,6 @@ export class PlanComponent {
 
     private drawWall(context: CanvasRenderingContext2D): void {
         const { x, y, width, height } = this.plan().wall;
-        context.fillRect(x, y, width, height);
         context.strokeStyle = '#151515';
         context.lineWidth = 2;
         context.strokeRect(x, y, width, height);
