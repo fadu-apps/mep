@@ -52,9 +52,20 @@ export class PlanComponent {
     }
 
     private drawWall(context: CanvasRenderingContext2D): void {
-        const { x, y, width, height } = this.plan().wall;
+        const { start, end, thickness, length } = this.plan().wall
+        if (length === 0) return
+
+        const normalX = (-(end.y - start.y) / length) * (thickness / 2)
+        const normalY = ((end.x - start.x) / length) * (thickness / 2)
+
         context.strokeStyle = '#151515';
         context.lineWidth = 1;
-        context.strokeRect(x, y, width, height);
+        context.beginPath()
+        context.moveTo(start.x + normalX, start.y + normalY)
+        context.lineTo(end.x + normalX, end.y + normalY)
+        context.lineTo(end.x - normalX, end.y - normalY)
+        context.lineTo(start.x - normalX, start.y - normalY)
+        context.closePath()
+        context.stroke()
     }
 }

@@ -1,20 +1,26 @@
 export class Wall {
-    readonly x: number;
-    readonly y: number;
-    readonly width: number;
-    readonly height: number;
+    readonly start: Point
+    readonly end: Point
+    readonly thickness: number
 
-    constructor({ x, y, width, height }: WallDimensions) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+    constructor({ start, end, thickness }: WallDimensions) {
+        this.start = start
+        this.end = end
+        this.thickness = thickness
+    }
+
+    get length(): number {
+        return Math.hypot(this.end.x - this.start.x, this.end.y - this.start.y)
     }
 }
 
 export interface WallDimensions {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
+    start: Point
+    end: Point
+    thickness: number
+}
+
+export interface Point {
+    x: number
+    y: number
 }
