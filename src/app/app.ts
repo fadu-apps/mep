@@ -12,6 +12,6 @@ import { PlanComponent } from './shared/plan/plan'
 })
 export class App {
     protected readonly plan = new Plan(
-        new Wall({ x: 150, y: 230, width: 500, height: 24 })
+        new Wall({ x: 100, y: 230, width: 500, height: 15 })
     )
 }
