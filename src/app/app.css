@@ -1,13 +1,4 @@
 :host {
-    display: block;
-    min-height: 100dvh;
-    color: #202225;
-    background: #f3f2ef;
-}
-
-main {
-    box-sizing: border-box;
-    width: min(100%, 1040px);
-    margin: 0 auto;
-    padding: 4rem 1.5rem;
+  display: block;
+  min-height: 100dvh;
 }

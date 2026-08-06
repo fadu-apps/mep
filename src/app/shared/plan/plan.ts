@@ -10,6 +10,9 @@ import {
 } from '@angular/core'
 import { Plan } from '../../core/models/plan'
 
+const DRAWING_WIDTH = 800
+const DRAWING_HEIGHT = 500
+
 @Component({
     selector: 'app-plan',
     templateUrl: './plan.html',
@@ -42,12 +45,22 @@ export class PlanComponent {
         if (!canvasReference) return
 
         const canvas = canvasReference.nativeElement
-        canvas.width = 800
-        canvas.height = 500
+        const bounds = canvas.getBoundingClientRect()
+        const pixelRatio = window.devicePixelRatio || 1
+        canvas.width = Math.round(bounds.width * pixelRatio)
+        canvas.height = Math.round(bounds.height * pixelRatio)
 
         const context = canvas.getContext('2d')
         if (!context) return
 
+        context.setTransform(
+            canvas.width / DRAWING_WIDTH,
+            0,
+            0,
+            canvas.height / DRAWING_HEIGHT,
+            0,
+            0,
+        )
         this.drawWall(context)
     }
 
