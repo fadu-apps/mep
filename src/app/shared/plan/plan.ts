@@ -1,17 +1,16 @@
 import {
-    afterNextRender,
     Component,
-    DestroyRef,
+    computed,
     effect,
     ElementRef,
-    inject,
     input,
+    Signal,
+    signal,
     viewChild
 } from '@angular/core'
 import { Plan } from '../../core/models/plan'
-
-const DRAWING_WIDTH = 800
-const DRAWING_HEIGHT = 500
+import { Wall } from '../../core/models/wall'
+import { isPointOverWall } from './wall-hit-test'
 
 @Component({
     selector: 'app-plan',
@@ -21,66 +20,58 @@ const DRAWING_HEIGHT = 500
 
 export class PlanComponent {
     readonly plan = input.required<Plan>()
-    private readonly canvas = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
-    private readonly destroyRef = inject(DestroyRef)
+    readonly isWallHovered = signal(false)
+    private readonly _canvas = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
 
-    private resizeObserver?: ResizeObserver
+    private readonly _context: Signal<CanvasRenderingContext2D | null | undefined> = computed(() => {
+        return this._canvas()?.nativeElement.getContext('2d')
+    })
+
+    private readonly _bounds: Signal<DOMRect | null | undefined> = computed(() => {
+        return this._canvas()?.nativeElement.getBoundingClientRect()
+    })
 
     constructor() {
         effect(() => this.draw())
-        afterNextRender(() => this.initializeCanvas())
-    }
-
-    private initializeCanvas(): void {
-        if (typeof ResizeObserver !== 'undefined') {
-            this.resizeObserver = new ResizeObserver(() => this.draw())
-            this.resizeObserver.observe(this.canvas()!.nativeElement)
-        }
-        this.destroyRef.onDestroy(() => this.resizeObserver?.disconnect())
-        this.draw()
     }
 
     private draw(): void {
-        const canvasReference = this.canvas()
-        if (!canvasReference) return
-
-        const canvas = canvasReference.nativeElement
-        const bounds = canvas.getBoundingClientRect()
-        const pixelRatio = window.devicePixelRatio || 1
-        canvas.width = Math.round(bounds.width * pixelRatio)
-        canvas.height = Math.round(bounds.height * pixelRatio)
-
-        const context = canvas.getContext('2d')
-        if (!context) return
-
-        context.setTransform(
-            canvas.width / DRAWING_WIDTH,
-            0,
-            0,
-            canvas.height / DRAWING_HEIGHT,
-            0,
-            0,
-        )
-        this.drawWall(context)
+        this.initCanvaSize()
+        this.drawWall(this.plan().wall)
     }
 
-    private drawWall(context: CanvasRenderingContext2D): void {
-        const { start, end, thickness, length } = this.plan().wall
-        if (length === 0) return
+    private initCanvaSize(): void {
+        const canvas = this._canvas()!.nativeElement
+        const bounds = canvas.getBoundingClientRect()
+        const pixelRatio = window.devicePixelRatio || 1
+        
+        canvas.width = Math.round(bounds.width * pixelRatio)
+        canvas.height = Math.round(bounds.height * pixelRatio)
+    }
 
+    private drawWall(wall: Wall): void {
+        const { start, end, thickness, length } = wall
+        
         const normalX = (-(end.y - start.y) / length) * (thickness / 2)
         const normalY = ((end.x - start.x) / length) * (thickness / 2)
 
-        context.fillStyle = '#ffffff'
-        context.strokeStyle = '#151515'
-        context.lineWidth = 1
-        context.beginPath()
-        context.moveTo(start.x + normalX, start.y + normalY)
-        context.lineTo(end.x + normalX, end.y + normalY)
-        context.lineTo(end.x - normalX, end.y - normalY)
-        context.lineTo(start.x - normalX, start.y - normalY)
-        context.closePath()
-        context.fill()
-        context.stroke()
+        this._context()!.fillStyle = '#ffffff'
+        this._context()!.strokeStyle = '#151515'
+        this._context()!.lineWidth = 1
+        this._context()!.beginPath()
+        this._context()!.moveTo(start.x + normalX, start.y + normalY)
+        this._context()!.lineTo(end.x + normalX, end.y + normalY)
+        this._context()!.lineTo(end.x - normalX, end.y - normalY)
+        this._context()!.lineTo(start.x - normalX, start.y - normalY)
+        this._context()!.closePath()
+        this._context()!.fill()
+        this._context()!.stroke()
+    }
+
+    onPointerMove(event: PointerEvent): void {
+        const x = ((event.clientX - this._bounds()!.left) / this._bounds()!.width) * this._canvas()!.nativeElement.width
+        const y = ((event.clientY - this._bounds()!.top) / this._bounds()!.height) * this._canvas()!.nativeElement.height
+
+        this.isWallHovered.set(isPointOverWall(this.plan().wall, x, y))
     }
 }

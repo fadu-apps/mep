@@ -1,3 +1,9 @@
 <section class="plan" aria-label="Architectural plan canvas">
-    <canvas #canvas aria-label="Architectural plan with one wall"></canvas>
+    <canvas
+        #canvas
+        aria-label="Architectural plan with one wall"
+        [style.cursor]="isWallHovered() ? 'pointer' : 'default'"
+        (pointermove)="onPointerMove($event)"
+        (pointerleave)="isWallHovered.set(false)"
+    ></canvas>
 </section>

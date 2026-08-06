@@ -15,7 +15,7 @@ export class App {
         new Wall({
             start: { x: 100, y: 230 },
             end: { x: 600, y: 230 },
-            thickness: 15,
+            thickness: 30,
         })
     )
 }
