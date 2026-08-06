@@ -1,2 +1,4 @@
 @import "./styles/_reset.scss";
+@import "./styles/themes/light.scss";
+@import "./styles/themes/dark.scss";
 @import "./styles/_body.scss";

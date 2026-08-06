@@ -35,6 +35,12 @@ export class PlanComponent {
         effect(() => this.draw())
     }
 
+    private getVariable(name: string): string {
+        return getComputedStyle(
+            this._canvas()!.nativeElement
+        ).getPropertyValue(name).trim()
+    }
+
     private draw(): void {
         this.initCanvaSize()
         this.drawWall(this.plan().wall)
@@ -55,8 +61,8 @@ export class PlanComponent {
         const normalX = (-(end.y - start.y) / length) * (thickness / 2)
         const normalY = ((end.x - start.x) / length) * (thickness / 2)
 
-        this._context()!.fillStyle = '#ffffff'
-        this._context()!.strokeStyle = '#151515'
+        this._context()!.fillStyle = this.getVariable('--wall-fill-color')
+        this._context()!.strokeStyle = this.getVariable('--wall-stroke-color')
         this._context()!.lineWidth = 1
         this._context()!.beginPath()
         this._context()!.moveTo(start.x + normalX, start.y + normalY)
