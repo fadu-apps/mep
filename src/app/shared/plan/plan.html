@@ -2,8 +2,6 @@
     <canvas
         #canvas
         aria-label="Architectural plan with one wall"
-        [style.cursor]="isWallHovered() ? 'pointer' : 'default'"
-        (pointermove)="onPointerMove($event)"
-        (pointerleave)="isWallHovered.set(false)"
+        (click)="onCanvasClick($event)"
     ></canvas>
 </section>

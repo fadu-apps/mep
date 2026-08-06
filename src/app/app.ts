@@ -18,4 +18,8 @@ export class App {
             thickness: 30,
         })
     )
+
+    protected onWallClick(wall: Wall): void {
+        console.log(wall)
+    }
 }

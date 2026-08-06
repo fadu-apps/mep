@@ -4,8 +4,8 @@ import {
     effect,
     ElementRef,
     input,
+    output,
     Signal,
-    signal,
     viewChild
 } from '@angular/core'
 import { Plan } from '../../core/models/plan'
@@ -20,7 +20,7 @@ import { isPointOverWall } from './wall-hit-test'
 
 export class PlanComponent {
     readonly plan = input.required<Plan>()
-    readonly isWallHovered = signal(false)
+    readonly wallClick = output<Wall>()
     private readonly _canvas = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
 
     private readonly _context: Signal<CanvasRenderingContext2D | null | undefined> = computed(() => {
@@ -68,10 +68,13 @@ export class PlanComponent {
         this._context()!.stroke()
     }
 
-    onPointerMove(event: PointerEvent): void {
+    onCanvasClick(event: MouseEvent): void {
         const x = ((event.clientX - this._bounds()!.left) / this._bounds()!.width) * this._canvas()!.nativeElement.width
         const y = ((event.clientY - this._bounds()!.top) / this._bounds()!.height) * this._canvas()!.nativeElement.height
+        const wall = this.plan().wall
 
-        this.isWallHovered.set(isPointOverWall(this.plan().wall, x, y))
+        if (isPointOverWall(wall, x, y)) {
+            this.wallClick.emit(wall)
+        }
     }
 }
