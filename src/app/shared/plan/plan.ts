@@ -71,14 +71,16 @@ export class PlanComponent {
         const normalX = (-(end.y - start.y) / length) * (thickness / 2)
         const normalY = ((end.x - start.x) / length) * (thickness / 2)
 
-        context.strokeStyle = '#151515';
-        context.lineWidth = 1;
+        context.fillStyle = '#ffffff'
+        context.strokeStyle = '#151515'
+        context.lineWidth = 1
         context.beginPath()
         context.moveTo(start.x + normalX, start.y + normalY)
         context.lineTo(end.x + normalX, end.y + normalY)
         context.lineTo(end.x - normalX, end.y - normalY)
         context.lineTo(start.x - normalX, start.y - normalY)
         context.closePath()
+        context.fill()
         context.stroke()
     }
 }
